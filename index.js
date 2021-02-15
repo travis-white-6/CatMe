@@ -3,6 +3,16 @@ const fetch = require('node-fetch');
 
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
+// https://firebase.google.com/docs/hosting/functions
+
+// Cat API documentation
+// https://docs.thecatapi.com/
+
+// Slack Bot + message formatting documentation for Slash Commands
+// https://slack.com/help/articles/115005265703-Create-a-bot-for-your-workspace
+// https://api.slack.com/interactivity/slash-commands
+// https://api.slack.com/messaging/composing/layouts#attachments
+// https://app.slack.com/block-kit-builder/
 
 async function getCatData() {
     // get cat data from thecatapi
