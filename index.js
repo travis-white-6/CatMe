@@ -85,6 +85,7 @@ exports.routeCat = functions.https.onRequest(  async (request, response) => {
     let catPun = terribleCatPun()
     let catUrl = await getCatData()
     response.status(200).send({
+        response_type: "in_channel",
         blocks: [
             {
                 type: "section",
