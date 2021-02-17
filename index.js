@@ -102,7 +102,7 @@ exports.routeCat = functions.https.onRequest(  async (request, response) => {
 });
 
 const slackWebhookPost = () => {
-    fetch('https://hooks.slack.com/services/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', {
+    fetch(functions.config().slack.webhook, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify({"text": "New Slack workspace added CatMe 🙀"}),
