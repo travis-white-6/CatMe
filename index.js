@@ -79,8 +79,6 @@ const terribleCatPun = () => {
 }
 
 exports.routeCat = functions.https.onRequest(  async (request, response) => {
-    // functions.logger.info("Hello logs!", {structuredData: true});
-
     // return to request
     let catPun = terribleCatPun()
     let catUrl = await getCatData()
@@ -102,3 +100,48 @@ exports.routeCat = functions.https.onRequest(  async (request, response) => {
         ]
     })
 });
+
+const slackWebhookPost = () => {
+    fetch('https://hooks.slack.com/services/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', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({"text": "New Slack workspace added CatMe 🙀"}),
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+// Slack OAuth 2 URL endpoint to finish OAuth handshake
+// Firebase function secret key doc https://firebase.google.com/docs/functions/config-env
+exports.slackAuth = functions.https.onRequest(  (request, response) => {
+    let code = request.query.code;
+    let dataBody = {
+        code: code,
+        client_secret: functions.config().slack.secret,
+        client_id: functions.config().slack.id,
+    }
+    fetch('https://slack.com/api/oauth.v2.access', {
+        method: 'POST',
+        body: new URLSearchParams(dataBody),
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+        .then(res => res.json())
+        .then(res => {
+            if (res && res.ok && res.access_token) {
+                // post to fungineering slack! we have a new workspace
+                slackWebhookPost()
+            }
+    })
+    response.status(200).send("Slack Workspace added");
+});
+
+exports.testSlackWebhook = functions.https.onRequest(  (request, response) => {
+    slackWebhookPost()
+    response.status(200).send("Webhook Test complete");
+})
+
