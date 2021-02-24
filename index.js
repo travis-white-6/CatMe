@@ -91,11 +91,11 @@ exports.routeCat = functions.https.onRequest(  async (request, response) => {
                     text: `<${catUrl}|${catPun}>`,
                     type: "mrkdwn"
                 },
-                accessory: {
-                    type: "image",
-                    image_url: catUrl,
-                    alt_text: "Cute cat"
-                }
+            },
+            {
+                type: "image",
+                image_url: catUrl,
+                alt_text: "Cute cat"
             }
         ]
     })
