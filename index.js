@@ -78,10 +78,27 @@ const terribleCatPun = () => {
     return puns[Math.floor(Math.random() * puns.length)]
 }
 
+const amplitudeTrack = (EVENT) => {
+    fetch('https://api.amplitude.com/2/httpapi', {
+        method: 'POST',
+        body: JSON.stringify({
+            "api_key": "a99bb9e4ced265ec036b6afe1d6a6faf",
+            "events": [{"user_id": "firebase_functions", "event_type": EVENT}]
+        }),
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        }}
+    )
+}
+
 exports.routeCat = functions.https.onRequest(  async (request, response) => {
     // return to request
     let catPun = terribleCatPun()
     let catUrl = await getCatData()
+
+    amplitudeTrack("SLACK_CATME_CALL")
+
     response.status(200).send({
         response_type: "in_channel",
         blocks: [
@@ -128,14 +145,15 @@ exports.slackAuth = functions.https.onRequest(  (request, response) => {
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded'
+        }}
+    ).then(
+        res => res.json()
+    ).then(res => {
+        if (res && res.ok && res.access_token) {
+            // post to fungineering slack! we have a new workspace
+            amplitudeTrack("SLACK_CATME_NEW_WORKSPACE")
+            slackWebhookPost()
         }
-    })
-        .then(res => res.json())
-        .then(res => {
-            if (res && res.ok && res.access_token) {
-                // post to fungineering slack! we have a new workspace
-                slackWebhookPost()
-            }
     })
     response.status(200).send("Slack Workspace added");
 });
